@@ -176,7 +176,7 @@ export function Search() {
 
 export default function MainContent() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
-
+  const [activeChip, setActiveChip] = React.useState('All categories');
   const handleFocus = (index) => {
     setFocusedCardIndex(index);
   };
@@ -185,34 +185,34 @@ export default function MainContent() {
     setFocusedCardIndex(null);
   };
 
-  const handleClick = () => {
-    console.info('You clicked the filter chip.');
+  const handleClickSections = (label) => {
+    console.info('You clicked the filter chip.',label);
+    setActiveChip(label)
   };
 
+  const chipStyles = (label) => ({
+    backgroundColor: activeChip === label ? '#303030' : 'transparent', 
+    color: activeChip === label ? '#fff' : 'inherit', 
+    border: 'none', 
+  });
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Typography variant="h1" gutterBottom>
-          Olympe
-        </Typography>
+            Olympe
+          </Typography>
+          <Typography variant="h4" gutterBottom sx={{ fontStyle: 'italic' }}>
+            Climb the Peaks of Technology
+          </Typography>
+      </Box>
+      <div>
         <Typography>Welcome to my blog !
           You will find some articles about some interessting IT technologies. Stay tuned !
         </Typography>
       </div>
-      <Box
-        sx={{
-          display: { xs: 'flex', sm: 'none' },
-          flexDirection: 'row',
-          gap: 1,
-          width: { xs: '100%', md: 'fit-content' },
-          overflow: 'auto',
-        }}
-      >
-        <Search />
-        <IconButton size="small" aria-label="RSS feed">
-          <RssFeedRoundedIcon />
-        </IconButton>
-      </Box>
+
       <Box
         sx={{
           display: 'flex',
@@ -232,45 +232,40 @@ export default function MainContent() {
             overflow: 'auto',
           }}
         >
-          <Chip onClick={handleClick} size="medium" label="All categories" />
+          <Chip 
+          size="medium" 
+          label="All categories" 
+          onClick={() => handleClickSections("All categories" )}
+          sx= {chipStyles('All categories')}
+          />
+          
           <Chip
-            onClick={handleClick}
             size="medium"
-            label="Company"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
+            label="Data"
+            onClick={() => handleClickSections("Data")}
+            sx= {chipStyles('Data')}
           />
           <Chip
-            onClick={handleClick}
             size="medium"
-            label="Product"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
+            label="Artifical Intelligence"
+            onClick={() => handleClickSections("Artifical Intelligence")}
+            sx={chipStyles('Artifical Intelligence')}
           />
           <Chip
-            onClick={handleClick}
             size="medium"
-            label="Design"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
+            label="DevOps"
+            onClick={() => handleClickSections("DevOps")}
+            sx={chipStyles('DevOps')}
           />
           <Chip
-            onClick={handleClick}
             size="medium"
-            label="Engineering"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
+            label="Cloud"
+            onClick={() => handleClickSections("Cloud")}
+            sx={chipStyles('Cloud')}
           />
         </Box>
-        <Box
+        
+        <Box  
           sx={{
             display: { xs: 'none', sm: 'flex' },
             flexDirection: 'row',

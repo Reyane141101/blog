@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
-import SitemarkIcon from './SitemarkIcon';
 
 function Copyright() {
   return (
@@ -58,7 +57,6 @@ export default function Footer() {
             }}
           >
             <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-              <SitemarkIcon />
               <Typography
                 variant="body2"
                 gutterBottom
@@ -196,7 +194,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://github.com/mui"
+              href="https://github.com/Reyane141101"
               aria-label="GitHub"
               sx={{ alignSelf: 'center' }}
             >
@@ -214,7 +212,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://www.linkedin.com/company/mui/"
+              href="https://www.linkedin.com/in/reyane-en-nabty-b3114819b/"
               aria-label="LinkedIn"
               sx={{ alignSelf: 'center' }}
             >
