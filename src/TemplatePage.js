@@ -16,7 +16,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  position: 'absolute',
+  position: 'sticky',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -28,6 +28,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundImage: 'none',
   zIndex: theme.zIndex.drawer + 1,
   flex: '0 0 auto',
+  transition: 'transform 0.3s ease-in-out',
 }));
 
 function TemplatePage({

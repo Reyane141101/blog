@@ -17,10 +17,12 @@ import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 
+const Subjects =["Data", "Artificial Intelligence", "DevOps", "Cloud"]
+
 const cardData = [
   {
     img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Engineering',
+    tag: Subjects[0],
     title: 'Revolutionizing software development with cutting-edge tools',
     description:
       'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
@@ -31,7 +33,7 @@ const cardData = [
   },
   {
     img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Product',
+    tag: Subjects[1],
     title: 'Innovative product features that drive success',
     description:
       'Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to robust functionality, learn why our product stands out.',
@@ -39,7 +41,7 @@ const cardData = [
   },
   {
     img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Design',
+    tag: Subjects[3],
     title: 'Designing for the future: trends and insights',
     description:
       'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
@@ -47,7 +49,7 @@ const cardData = [
   },
   {
     img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Company',
+    tag: Subjects[2],
     title: "Our company's journey: milestones and achievements",
     description:
       "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
@@ -55,7 +57,7 @@ const cardData = [
   },
   {
     img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Engineering',
+    tag: Subjects[0],
     title: 'Pioneering sustainable engineering solutions',
     description:
       "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
@@ -66,7 +68,7 @@ const cardData = [
   },
   {
     img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Product',
+    tag: Subjects[0],
     title: 'Maximizing efficiency with our latest product updates',
     description:
       'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
@@ -94,7 +96,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
 const SyledCardContent = styled(CardContent)({
   display: 'flex',
   flexDirection: 'column',
-  gap: 4,
+  gap: 2,
   padding: 16,
   flexGrow: 1,
   '&:last-child': {
@@ -241,27 +243,27 @@ export default function MainContent() {
           
           <Chip
             size="medium"
-            label="Data"
-            onClick={() => handleClickSections("Data")}
-            sx= {chipStyles('Data')}
+            label= {Subjects[0]}
+            onClick={() => handleClickSections(Subjects[0])}
+            sx= {chipStyles(Subjects[0])}
           />
           <Chip
             size="medium"
-            label="Artifical Intelligence"
-            onClick={() => handleClickSections("Artifical Intelligence")}
-            sx={chipStyles('Artifical Intelligence')}
+            label={Subjects[1]}
+            onClick={() => handleClickSections(Subjects[1])}
+            sx={chipStyles(Subjects[1])}
           />
           <Chip
             size="medium"
-            label="DevOps"
-            onClick={() => handleClickSections("DevOps")}
-            sx={chipStyles('DevOps')}
+            label={Subjects[2]}
+            onClick={() => handleClickSections(Subjects[2])}
+            sx={chipStyles(Subjects[2])}
           />
           <Chip
             size="medium"
-            label="Cloud"
-            onClick={() => handleClickSections("Cloud")}
-            sx={chipStyles('Cloud')}
+            label={Subjects[3]}
+            onClick={() => handleClickSections(Subjects[3])}
+            sx={chipStyles(Subjects[3])}
           />
         </Box>
         
@@ -280,7 +282,8 @@ export default function MainContent() {
           </IconButton>
         </Box>
       </Box>
-      <Grid container spacing={2} columns={12}>
+
+      <Grid container spacing={1} columns={12}>
         <Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
@@ -345,7 +348,7 @@ export default function MainContent() {
             <Author authors={cardData[1].authors} />
           </SyledCard>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(2)}
@@ -377,81 +380,8 @@ export default function MainContent() {
             <Author authors={cardData[2].authors} />
           </SyledCard>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}
-          >
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(3)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[3].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[3].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[3].description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author authors={cardData[3].authors} />
-            </SyledCard>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}
-            >
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}
-              >
-                <div>
-                  <Typography gutterBottom variant="caption" component="div">
-                    {cardData[4].tag}
-                  </Typography>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {cardData[4].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {cardData[4].description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author authors={cardData[4].authors} />
-            </SyledCard>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+
+        <Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(5)}
@@ -482,7 +412,7 @@ export default function MainContent() {
             </SyledCardContent>
             <Author authors={cardData[5].authors} />
           </SyledCard>
-        </Grid>
+        </Grid> #TODO
       </Grid>
     </Box>
   );
