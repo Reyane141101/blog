@@ -1,11 +1,19 @@
 import './App.css';
-import Blog from './Blog'
+import MainPage from './pages/MainPage'
+import SparkArticlePage from './pages/articles/SparkArticlePage';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-          <Blog/>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/articles/SetupSpark" element={<SparkArticlePage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

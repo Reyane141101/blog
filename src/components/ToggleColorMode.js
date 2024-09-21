@@ -10,14 +10,15 @@ function ToggleColorMode({ mode, toggleColorMode, ...props }) {
     <IconButton
       onClick={toggleColorMode}
       color="primary"
-      size="small"
+      size="medium"
       aria-label="Theme toggle button"
+      
       {...props}
     >
       {mode === 'dark' ? (
-        <WbSunnyRoundedIcon fontSize="small" />
+        <WbSunnyRoundedIcon fontSize="medium" />
       ) : (
-        <ModeNightRoundedIcon fontSize="small" />
+        <ModeNightRoundedIcon fontSize="medium" />
       )}
     </IconButton>
   );
