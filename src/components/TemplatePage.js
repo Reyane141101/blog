@@ -2,8 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
-import ToggleColorMode from './components/ToggleColorMode';
-import getBlogTheme from './theme/getBlogTheme';
+import ToggleColorMode from './ToggleColorMode';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
@@ -13,10 +12,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import Footer from './Footer';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  position: 'absolute',
+  position: 'sticky',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -28,15 +30,31 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundImage: 'none',
   zIndex: theme.zIndex.drawer + 1,
   flex: '0 0 auto',
+  transition: 'transform 0.3s ease-in-out',
 }));
 
-function TemplatePage({
-  mode,
-  toggleColorMode,
-  children,
-}) {
-  
-  const blogTheme = createTheme(getBlogTheme(mode));
+function TemplatePage({children}) 
+{
+  const [mode, setMode] = React.useState('light');
+  const defaultTheme = createTheme({ palette: { mode } });
+  React.useEffect(() => {
+    const savedMode = localStorage.getItem('themeMode');
+    if (savedMode) {
+      setMode(savedMode);
+    } 
+    else {
+      const systemPrefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)',
+      ).matches;
+      setMode(systemPrefersDark ? 'dark' : 'light');
+    }
+  }, []);
+
+  const toggleColorMode = () => {
+    const newMode = mode === 'dark' ? 'light' : 'dark';
+    setMode(newMode);
+    localStorage.setItem('themeMode', newMode);
+  };
   const [open, setOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -44,7 +62,7 @@ function TemplatePage({
   };
 
   return (
-    <ThemeProvider theme={blogTheme}>
+    <ThemeProvider theme={defaultTheme}>
       <Box sx={{ height: '100dvh', flexDirection: 'column' }}>
         <StyledAppBar>
           <Toolbar
@@ -54,27 +72,27 @@ function TemplatePage({
               display: 'flex',
               justifyContent: 'space-between',
               width: '98%',
-              p: '12px 12px',
+              p: '15px 12px',
             }}
           >
             <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" sx={{fontSize: '1rem'}}>
                 Features
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" sx={{fontSize: '1rem'}}>
                 Testimonials
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" sx={{fontSize: '1rem'}}>
                 Highlights
               </Button>
-              <Button variant="text" color="info" size="small">
+              <Button variant="text" color="info" sx={{fontSize: '1rem'}}>
                 Pricing
               </Button>
-              <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
+              <Button variant="text" color="info"  sx={{minWidth: 0, fontSize: '1rem'}}>
                 FAQ
               </Button>
-              <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
+              <Button variant="text" color="info" sx={{minWidth: 0, fontSize: '1rem'}}>
                 Blog
               </Button>
             </Box>
@@ -92,10 +110,10 @@ function TemplatePage({
                 mode={mode}
                 toggleColorMode={toggleColorMode}
             />
-            <Button color="primary" variant="outlined" size="small">
+            <Button color="primary" variant="outlined" sx={{ fontSize: '1rem', padding: '10px 16px' }}>
               Sign in
             </Button>
-            <Button color="primary" variant="contained" size="small">
+            <Button color="primary" variant="contained" sx={{ fontSize: '1rem', padding: '10px 16px' }}>
               Sign up
             </Button>
           </Box>
@@ -139,7 +157,15 @@ function TemplatePage({
           </Box>
           </Toolbar>
         </StyledAppBar>
-        <Box sx={{ flex: '101 111', overflow: 'auto' }}>{children}</Box>
+        <CssBaseline enableColorScheme />
+        <Container
+          maxWidth="lg"
+          component="main"
+          sx={{ display: 'flex', flexDirection: 'column', my: 8, gap: 4 }}
+        >
+          <Box sx={{ flex: '101 111', overflow: 'auto' }}>{children}</Box>
+        </Container>
+        <Footer />
       </Box>
     </ThemeProvider>
   );
