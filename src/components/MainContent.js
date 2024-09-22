@@ -124,22 +124,18 @@ export function Search() {
 function CustomCardContent({ id }) {
   const card = cardData.find(card => card.id === id);
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
-
-  const handleFocus = (idx) => {
-    setFocusedCardIndex(idx);
-    console.info("ahh click")
+  const navigate = useNavigate();
+  
+  const handleFocus = (card) => {
+    setFocusedCardIndex(card.id);
+    navigate(card.url);
   };
 
-  const handleBlur = () => {
-    setFocusedCardIndex(null);
-    console.info("ahh pas click")
-  };
   return (
     <Grid size={{ xs: 12, md: 6 }}>
       <SyledCard
         variant="outlined"
-        onFocus={() => handleFocus(id)}
-        onBlur={handleBlur}
+        onFocus={() => handleFocus(card)}
         tabIndex={0}
         className={focusedCardIndex === id ? 'Mui-focused' : ''}
       >
