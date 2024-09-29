@@ -1,3 +1,5 @@
+const Subjects =["Data", "Artificial Intelligence", "DevOps", "Cloud"]
+
 
 const cardData = 
 [
@@ -70,3 +72,4 @@ const cardData =
   ];
 
 module.exports = cardData;
+module.exports = Subjects;
