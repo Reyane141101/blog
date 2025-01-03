@@ -121,7 +121,6 @@ export function Search() {
 function CustomCardContent({ card }) {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
   const navigate = useNavigate();
-  
   const handleFocus = (card) => {
     setFocusedCardIndex(card.id);
     navigate(card.url);
@@ -175,7 +174,7 @@ export default function MainContent() {
 
   const [cardData, setCardData] = React.useState([]);
   React.useEffect(() => {
-    fetch('http://localhost:3000/api/cardData') 
+    fetch('http://localhost:3001/api/cardData') 
       .then(response => response.json())
       .then(data => {
         setCardData(data.data); 
@@ -186,19 +185,16 @@ export default function MainContent() {
 ? cardData
 : cardData.filter(card => card.tag === activeChip);
 
+
   const [Subjects, setSubjects] = React.useState([]);
   React.useEffect(() => {
-    fetch('http://localhost:3000/api/Subjects') 
+    fetch('http://localhost:3001/api/Subjects') 
       .then(response => response.json())
       .then(data => {
         setSubjects(data.data); 
       })
       .catch(error => console.error('Erreur lors de la récupération des données:', error));
   }, []);
-
-
-
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       
@@ -288,7 +284,7 @@ export default function MainContent() {
           (
             (cardData, _) => 
             {
-            return <CustomCardContent id={cardData.id} />; 
+              return <CustomCardContent card={cardData} />; 
             }
           )
         }
