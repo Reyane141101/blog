@@ -16,10 +16,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
-import {cardData, Subjects} from '../data/Constants'
 import { useNavigate } from 'react-router-dom';
-
-
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -121,11 +118,9 @@ export function Search() {
   );
 }
 
-function CustomCardContent({ id }) {
-  const card = cardData.find(card => card.id === id);
+function CustomCardContent({ card }) {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
   const navigate = useNavigate();
-  
   const handleFocus = (card) => {
     setFocusedCardIndex(card.id);
     navigate(card.url);
@@ -137,7 +132,7 @@ function CustomCardContent({ id }) {
         variant="outlined"
         onFocus={() => handleFocus(card)}
         tabIndex={0}
-        className={focusedCardIndex === id ? 'Mui-focused' : ''}
+        className={focusedCardIndex === card.id ? 'Mui-focused' : ''}
       >
         <CardMedia
           component="img"
@@ -177,10 +172,29 @@ export default function MainContent() {
     border: 'none', 
   });
 
+  const [cardData, setCardData] = React.useState([]);
+  React.useEffect(() => {
+    fetch('http://localhost:3001/api/cardData') 
+      .then(response => response.json())
+      .then(data => {
+        setCardData(data.data); 
+      })
+      .catch(error => console.error('Erreur lors de la récupération des données:', error));
+  }, []);
   const filteredCardData = activeChip === 'All categories'
-    ? cardData
-    : cardData.filter(card => card.tag === activeChip);
+? cardData
+: cardData.filter(card => card.tag === activeChip);
 
+
+  const [Subjects, setSubjects] = React.useState([]);
+  React.useEffect(() => {
+    fetch('http://localhost:3001/api/Subjects') 
+      .then(response => response.json())
+      .then(data => {
+        setSubjects(data.data); 
+      })
+      .catch(error => console.error('Erreur lors de la récupération des données:', error));
+  }, []);
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       
@@ -270,7 +284,7 @@ export default function MainContent() {
           (
             (cardData, _) => 
             {
-            return <CustomCardContent id={cardData.id} />; 
+              return <CustomCardContent card={cardData} />; 
             }
           )
         }
