@@ -4,13 +4,17 @@
   "description": "This package will contain the back end of my blog",
   "main": "index.js",
   "scripts": {
+    "start": "node src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "keywords": [],
   "dependencies": {
+    "axios": "^1.7.9",
     "cors": "^2.8.5",
-    "express": "^4.21.0"
+    "csv-parse": "^5.6.0",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0"
   }
 }
