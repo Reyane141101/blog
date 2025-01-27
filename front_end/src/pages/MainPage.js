@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import MainContent from '../components/MainContent';
-import TemplatePage from '../components/TemplatePage';
+import MainContent from '../components/MainPageContent';
+import TemplatePage from '../components/shared/TemplatePage';
 
-export default function MainPage() {
-
+export default function MainPage() 
+{
   return (
-    <TemplatePage>
+    <TemplatePage mode='dark'>
           <MainContent />
     </TemplatePage>
   );

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
@@ -8,17 +8,17 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import { useNavigate } from 'react-router-dom';
+const yaml = require('js-yaml');
 
-const SyledCard = styled(Card)(({ theme }) => ({
+const SyledCard = styled(Card)(({ theme }) => 
+  ({
   display: 'flex',
   flexDirection: 'column',
   padding: 0,
@@ -32,7 +32,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
     outline: '3px solid',
     outlineColor: 'hsla(210, 98%, 48%, 0.5)',
     outlineOffset: '2px',
-  },
+  }
 }));
 
 const SyledCardContent = styled(CardContent)({
@@ -54,7 +54,7 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 });
 
-function Author({ authors }) {
+function Credits({ authors, date }) {
   return (
     <Box
       sx={{
@@ -73,31 +73,28 @@ function Author({ authors }) {
           {authors.map((author, index) => (
             <Avatar
               key={index}
-              alt={author.name}
-              src={author.avatar}
+              alt={author}
+              src={author}
               sx={{ width: 24, height: 24 }}
             />
           ))}
         </AvatarGroup>
         <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+          {authors.map((author) => author)}
         </Typography>
       </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
+      <Typography variant="caption">{date}</Typography>
     </Box>
   );
 }
 
-Author.propTypes = {
-  authors: PropTypes.arrayOf(
-    PropTypes.shape({
-      avatar: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+Credits.propTypes = {
+  authors: PropTypes.arrayOf(PropTypes.string).isRequired,
+  date: PropTypes.string.isRequired,
 };
 
-export function Search() {
+export function Search() 
+{
   return (
     <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
       <OutlinedInput
@@ -118,14 +115,14 @@ export function Search() {
   );
 }
 
-function CustomCardContent({ card }) {
+function CustomCardContent({ card }) 
+{
   const [focusedCardIndex, setFocusedCardIndex] = React.useState(null);
   const navigate = useNavigate();
   const handleFocus = (card) => {
     setFocusedCardIndex(card.id);
     navigate(card.url);
   };
-
   return (
     <Grid size={{ xs: 12, md: 6 }}>
       <SyledCard
@@ -137,16 +134,18 @@ function CustomCardContent({ card }) {
         <CardMedia
           component="img"
           alt={card.altText || "Image"}
-          image={card.img}
+          image={card.thumbnail}
           aspect-ratio="16 / 9"
           sx={{
+            height: '100%',
+            width: 'auto',
             borderBottom: '1px solid',
             borderColor: 'divider',
           }}
         />
         <SyledCardContent>
           <Typography gutterBottom variant="caption" component="div">
-            {card.tag}
+            {card.category}
           </Typography>
           <Typography gutterBottom variant="h6" component="div">
             {card.title}
@@ -155,15 +154,32 @@ function CustomCardContent({ card }) {
             {card.description}
           </StyledTypography>
         </SyledCardContent>
-        <Author authors={card.authors} />
+        <Credits 
+        authors={card.author.split(",")}
+        date={card.date} 
+        />
       </SyledCard>
     </Grid>
   );
 }
 
-export default function MainContent() {
+export default function MainContent() 
+{
   const [activeChip, setActiveChip] = React.useState('All categories');
-  const handleClickSections = (label) => {
+  const [categories, setCategories] = React.useState([]);
+  const [previews, setPreviews] = React.useState([]);
+  const [globalPreviews, setGlobalPreviews] = React.useState([]);
+
+  const handleClickSections = (label) => 
+  {
+    if (label === "All categories")
+    {
+      setPreviews(globalPreviews);
+    }
+    else
+    {
+      setPreviews(globalPreviews.filter(preview => preview.category === label))
+    }
     setActiveChip(label)
   };
   const chipStyles = (label) => ({
@@ -172,45 +188,43 @@ export default function MainContent() {
     border: 'none', 
   });
 
-  const [cardData, setCardData] = React.useState([]);
-  React.useEffect(() => {
-    fetch('http://localhost:3001/api/cardData') 
+  
+  React.useEffect(() => // Récuperation des catégories
+  {
+    fetch('http://localhost:3001/api/getCategories') 
+      .then(response => response.json())
+      .then(data => setCategories(data.data.split(',')))
+      .catch(error => console.error('Erreur lors de la récupération des données:', error));
+  }, [])
+
+  React.useEffect(() => // Récuperation des previews
+  {
+    fetch('http://localhost:3001/api/article/previews')
       .then(response => response.json())
       .then(data => {
-        setCardData(data.data); 
-      })
-      .catch(error => console.error('Erreur lors de la récupération des données:', error));
-  }, []);
-  const filteredCardData = activeChip === 'All categories'
-? cardData
-: cardData.filter(card => card.tag === activeChip);
+        const previews = data.data.map((item) => yaml.load(item));
+        setPreviews(previews); 
+        setGlobalPreviews(previews);})
+      .catch(error => console.error('Erreur lors de la récupération des preview:', error));
+  }, [])
 
-
-  const [Subjects, setSubjects] = React.useState([]);
-  React.useEffect(() => {
-    fetch('http://localhost:3001/api/Subjects') 
-      .then(response => response.json())
-      .then(data => {
-        setSubjects(data.data); 
-      })
-      .catch(error => console.error('Erreur lors de la récupération des données:', error));
-  }, []);
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h1" gutterBottom>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
+        <Box
+          textAlign="center"
+        >
+          <Typography variant="h1" gutterBottom>
             Olympe
           </Typography>
           <Typography variant="h4" gutterBottom sx={{ fontStyle: 'italic' }}>
             Climb the Peaks of Technology
           </Typography>
-      </Box>
-      <div>
-        <Typography>Welcome to my blog !
-          You will find some articles about some interessting IT technologies. Stay tuned !
+        </Box>
+        <Typography> 
+          Welcome to my blog ! You will find some articles about some interessting IT technologies. Stay tuned !
         </Typography>
-      </div>
+      </Box>
 
       <Box
         sx={{
@@ -240,27 +254,27 @@ export default function MainContent() {
           
           <Chip
             size="medium"
-            label= {Subjects[0]}
-            onClick={() => handleClickSections(Subjects[0])}
-            sx= {chipStyles(Subjects[0])}
+            label= {categories[0]}
+            onClick={() => handleClickSections(categories[0])}
+            sx= {chipStyles(categories[0])}
           />
           <Chip
             size="medium"
-            label={Subjects[1]}
-            onClick={() => handleClickSections(Subjects[1])}
-            sx={chipStyles(Subjects[1])}
+            label={categories[1]}
+            onClick={() => handleClickSections(categories[1])}
+            sx={chipStyles(categories[1])}
           />
           <Chip
             size="medium"
-            label={Subjects[2]}
-            onClick={() => handleClickSections(Subjects[2])}
-            sx={chipStyles(Subjects[2])}
+            label={categories[2]}
+            onClick={() => handleClickSections(categories[2])}
+            sx={chipStyles(categories[2])}
           />
           <Chip
             size="medium"
-            label={Subjects[3]}
-            onClick={() => handleClickSections(Subjects[3])}
-            sx={chipStyles(Subjects[3])}
+            label={categories[3]}
+            onClick={() => handleClickSections(categories[3])}
+            sx={chipStyles(categories[3])}
           />
         </Box>
         <Box  
@@ -273,20 +287,14 @@ export default function MainContent() {
           }}
         >
           <Search />
-          <IconButton size="small" aria-label="RSS feed">
-            <RssFeedRoundedIcon />
-          </IconButton>
         </Box>
       </Box>
       <Grid container spacing={1} columns={12}>
         {
-          filteredCardData.map
-          (
-            (cardData, _) => 
-            {
-              return <CustomCardContent card={cardData} />; 
-            }
-          )
+          previews.map((preview, index) => 
+          {
+            return <CustomCardContent key={index} card={preview} />;
+          })
         }
       </Grid>
     </Box>

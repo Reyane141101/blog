@@ -1,9 +1,9 @@
-const { google } = require('googleapis');
-const path = require('path');
+const {google} = require('googleapis');
+const {resolve} = require('path');
 
 async function authenticate() 
 {
-    const keyFile = path.resolve(__dirname, '.pacific-engine-446821-p3-2de793db5e00.json'); 
+    const keyFile = resolve(__dirname, '.pacific-engine-446821-p3-2de793db5e00.json'); 
     const SCOPES = ['https://www.googleapis.com/auth/drive'];
     try 
     {
@@ -13,7 +13,6 @@ async function authenticate()
         });
         const oauth2Client = await auth.getClient();
         google.options({ auth: oauth2Client });
-        console.log('Authenticated with service account');
     } 
     catch (error) 
     {
@@ -21,4 +20,4 @@ async function authenticate()
     }
 }
 
-module.exports = { authenticate };
+module.exports = {authenticate};

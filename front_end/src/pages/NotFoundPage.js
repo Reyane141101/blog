@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Typography, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
-import TemplatePage from '../components/TemplatePage';
+import TemplatePage from '../components/shared/TemplatePage';
 
 
 const ErrorContainer = styled(Container)(({ theme }) => ({

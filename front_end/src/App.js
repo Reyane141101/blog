@@ -1,17 +1,29 @@
 import './App.css';
+import React from 'react';
 import NotFoundPage from './pages/NotFoundPage';
 import MainPage from './pages/MainPage'
-import SparkArticlePage from './pages/articles/SparkArticlePage';
-import React from 'react';
+import GetArticle from './components/articles/GetArticle';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-function App() {
+
+function Article() 
+{
+  let articleId = useParams();
+  let ArticleName = articleId['*'] + '.mdx'
+  return (
+    <GetArticle articleName={ArticleName}/>
+    );
+}
+
+function App() 
+{
   return (
     <Router>
       <div className="App">
         <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/articles/SetupSpark" element={<SparkArticlePage />} />
+        <Route path="/articles/*" element={<Article />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>

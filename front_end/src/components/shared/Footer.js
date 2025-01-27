@@ -203,16 +203,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://x.com/MaterialUI"
-              aria-label="X"
-              sx={{ alignSelf: 'center' }}
-            >
-              <TwitterIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              size="small"
-              href="https://www.linkedin.com/in/reyane-en-nabty-b3114819b/"
+              href="https://www.linkedin.com/in/reyane-en-nabty/"
               aria-label="LinkedIn"
               sx={{ alignSelf: 'center' }}
             >
