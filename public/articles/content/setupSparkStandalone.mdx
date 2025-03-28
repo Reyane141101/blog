@@ -1,0 +1,237 @@
+
+# How to Set Up Spark in Standalone Mode
+
+<Image src="https://datascientest.com/wp-content/uploads/2021/08/illu_apache_spark-28.png" alt="Installing Apache Spark" />
+
+Apache Spark is a fast, general-purpose cluster-computing system designed for high-performance big data processing. It’s ideal for handling massive datasets by performing computations in memory. When running in standalone mode, Spark operates on a single machine or a few machines, making it suitable for development and smaller-scale deployments.
+
+If you're new to Apache Spark, check out this [overview of Spark](https://spark.apache.org/downloads.html).
+
+## Spark Setup for Your Data Engineers
+
+In this example, we assume your company has a limited infrastructure, and you need to set up a Spark cluster for your data engineers to process large-scale data. 
+
+For our setup, we only have three VMs, which will be designated as `worker1`, `worker2`, and `master`.
+
+### VM Setup with Virt-Manager
+
+Using Virt-Manager, I created three VMs with the following configurations:
+
+<Image src="https://i.postimg.cc/Ghzj6tGj/setup-Spark-Standalone-virt-manager.png" alt="Spark VMs" />
+
+- **Worker Nodes**: 50 GB of RAM each.
+- **Master Node**: 25 GB of RAM.
+- Each VM has a unique IP address.
+
+### Spark Installation Process
+
+We’ll download Spark from the official Apache archives. I chose Spark version 3.4.1:
+
+<CodeBlock language="bash">
+```
+wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+```
+</CodeBlock>
+
+Then, unpack the `.tgz` file and move it to `/opt/spark/`:
+
+<CodeBlock language="bash">
+```
+tar -xvf spark-3.4.1-bin-hadoop3.tgz
+sudo mv spark-3.4.1-bin-hadoop /opt/spark/
+```
+</CodeBlock>
+
+Next, set up the environment variables:
+
+<CodeBlock language="bash">
+```
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+```
+</CodeBlock>
+
+### Installing Java
+
+Apache Spark requires Java to run. For version 3.4.1, Java 8, 11, or 17 is compatible. Here, we install OpenJDK 11:
+
+<CodeBlock language="bash">
+```
+sudo apt install openjdk-11-jdk
+```
+</CodeBlock>
+
+Then, set up Java environment variables:
+
+<CodeBlock language="bash">
+```
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+</CodeBlock>
+
+### Modifying `/etc/hosts`
+
+To ensure proper communication between the nodes, modify the `/etc/hosts` file to map the IP addresses of the master and worker nodes.
+
+<CodeBlock language="bash">
+```
+sudo nano /etc/hosts
+```
+</CodeBlock>
+
+Add the following lines:
+
+<CodeBlock language="bash">
+```
+192.168.122.71 master_node
+192.168.122.72 worker_1_node
+192.168.122.73 worker_2_node
+```
+</CodeBlock>
+
+### Configuring Spark
+
+Now, navigate to the Spark configuration directory and move the template files to active configurations:
+
+<CodeBlock language="bash">
+```
+cd /opt/spark/conf
+mv spark-env.sh.template spark-env.sh
+mv workers.template workers
+```
+</CodeBlock>
+
+In the `spark-env.sh` file, set the master node’s IP:
+
+<CodeBlock language="bash">
+```
+SPARK_MASTER_HOST=192.168.122.71
+```
+</CodeBlock>
+
+In the `workers` file, add the worker node labels (as defined in `/etc/hosts`):
+
+<CodeBlock language="bash">
+```
+worker_1_node
+worker_2_node
+```
+</CodeBlock>
+
+### Starting the Cluster
+
+Once the configurations are done, start the cluster:
+
+<CodeBlock language="bash">
+```
+/opt/spark/sbin/./start-all.sh
+```
+</CodeBlock>
+
+You can monitor the logs of the master node here:
+
+<CodeBlock language="bash">
+```
+cd /opt/spark/logs/
+```
+</CodeBlock>
+
+### Verifying the Spark UI
+
+If everything has gone smoothly, the logs will show that the Spark UI is accessible on the master node’s IP address. You should see a page like this:
+
+<Image src="https://i.postimg.cc/xTJwGHz4/Capture-d-cran-2025-02-06-114825.png" alt="Spark UI" />
+
+### Running a Spark Job
+
+To test the cluster, submit a Spark job using the `spark-submit` command. This will execute the job on the cluster.
+
+Here’s a basic example of submitting a Spark job written in Python:
+
+<CodeBlock language="bash">
+```
+spark-submit --master spark://192.168.122.71:7077 my_spark_app.py
+```
+</CodeBlock>
+
+### Why Choose Apache Spark?
+
+Apache Spark offers a lot of advantages, including:
+
+- **Speed**: Spark is much faster than Hadoop for most data processing workloads.
+- **Scalability**: Spark can scale from a single machine to a large cluster with ease.
+- **Versatility**: Spark supports a variety of data processing tasks, such as batch processing, stream processing, machine learning, and SQL queries.
+
+<Image src="https://www.example.com/spark-advantages.png" alt="Advantages of Apache Spark" />
+
+## Step 1: Installing Apache Spark
+
+The first step is to install Apache Spark. Follow these steps:
+
+1. **Install Java**: Apache Spark requires Java 8 or higher. Download and install the Java Development Kit (JDK) from the official [Oracle website](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html).
+
+2. **Download Apache Spark**: Visit the [official Apache Spark website](https://spark.apache.org/downloads.html) and download the latest version of Spark.
+
+3. **Set Environment Variables**: Make sure you set the `SPARK_HOME` environment variable to the folder where you installed Spark.
+
+<CodeBlock language="bash">
+```
+export SPARK_HOME=/path/to/spark
+export PATH=$PATH:$SPARK_HOME/bin
+```
+</CodeBlock>
+
+<Image src="https://www.example.com/spark-installation.png" alt="Installing Apache Spark" />
+
+## Step 2: Starting Spark in Local Mode
+
+Once you've installed Spark, you can run it in local mode for development and testing. This is done by running the `spark-shell`:
+
+<CodeBlock language="bash">
+```
+spark-shell
+```
+</CodeBlock>
+
+This will launch the Spark shell, where you can run Spark commands interactively. Here’s a simple Spark command to read a text file and count the words:
+
+<CodeBlock language="scala">
+```
+val textFile = sc.textFile("path/to/textfile.txt")
+val wordCount = textFile.flatMap(line => line.split(" ")).countByValue()
+wordCount.foreach(println)
+```
+</CodeBlock>
+
+<Image src="https://www.example.com/spark-shell.png" alt="Running Spark Shell" />
+
+## Step 3: Running Spark on a Cluster
+
+For production environments, you’ll want to run Spark on a cluster. Spark supports various cluster managers like **YARN**, **Mesos**, and **Kubernetes**. Here's how to run Spark on YARN:
+
+<CodeBlock language="bash">
+```
+spark-submit --master yarn --deploy-mode cluster --class com.example.MyApp myapp.jar
+```
+</CodeBlock>
+
+This will submit your Spark job to the YARN cluster. Spark will handle the resource management and task scheduling for you.
+
+<Image src="https://www.example.com/spark-cluster.png" alt="Running Spark on YARN Cluster" />
+
+## Step 4: Visualizing Data with Spark
+
+Once you’ve processed your data, you can visualize the results. Spark integrates well with popular visualization libraries like **Matplotlib** in Python. Here's a sample Python code to plot the results:
+
+<Image src="https://www.example.com/spark-visualization.png" alt="Spark Data Visualization" />
+
+## Conclusion
+
+Apache Spark is a powerful tool for big data processing. With the steps outlined in this guide, you should now be able to install and set up Spark, process your data, and even visualize the results.
+
+Spark can handle a wide variety of workloads, and with its support for distributed computing, you can scale your data processing pipelines to handle petabytes of data.
+
+<Image src="https://www.example.com/spark-conclusion.png" alt="Conclusion on Apache Spark" />
+
+---
