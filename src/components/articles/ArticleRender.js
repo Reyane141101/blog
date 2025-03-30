@@ -3,33 +3,25 @@ import { MDXProvider } from "@mdx-js/react";
 import { compile } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 import { run } from "@mdx-js/mdx";
-import { CenteredText, CodeBlock, Image } from "./ArticleComponents";
+import { CenteredText, CodeBlock, Image, Paragraph } from "./ArticleComponents";
 
+console.log("CodeBlock in ArticleRender:", CodeBlock);
 
-export const ArticleRender = ({ content }) => 
-{
+export const ArticleRender = ({ content }) => {
   const [mdxContent, setMdxContent] = React.useState(null);
-  React.useEffect(() => 
-  {
-    async function compileMDX() 
-    {
-      try 
-      {
-        const compiled = await compile(content, 
-        {
+
+  React.useEffect(() => {
+    async function compileMDX() {
+      try {
+        const compiled = await compile(content, {
           outputFormat: "function-body",
           remarkPlugins: [],
           rehypePlugins: [],
         });
-        const { default: MDXContent } = await run(
-          compiled, 
-          { ...runtime }
-        );
+        const { default: MDXContent } = await run(compiled, { ...runtime });
         setMdxContent(() => MDXContent);
-      } 
-      catch (err) 
-      {
-        console.error("Error while parsing .mdx file :", err)
+      } catch (err) {
+        console.error("Error while parsing .mdx file :", err);
       }
     }
     compileMDX();
@@ -37,7 +29,7 @@ export const ArticleRender = ({ content }) =>
 
   return (
     <MDXProvider>
-       {mdxContent ? React.createElement(mdxContent, { components: { CenteredText, CodeBlock, Image } }) : null}
+      {mdxContent ? React.createElement(mdxContent, { components: { CenteredText, CodeBlock, Image, Paragraph } }) : null}
     </MDXProvider>
   );
 };

@@ -3,7 +3,6 @@ import React from 'react';
 import NotFoundPage from './pages/NotFoundPage';
 import MainPage from './pages/MainPage'
 import GetArticle from './components/articles/GetArticle';
-import LoginPage from './pages/LoginPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
@@ -25,8 +24,6 @@ function App()
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/articles/*" element={<Article />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signUp" element={<LoginPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>

@@ -21,3 +21,10 @@ export const Image = ({ src, alt }) =>
     <img src={src} alt={alt} style={{ maxWidth: '50%', height: 'auto' }} />
   </Box>
 );
+
+export const Paragraph = ({ children }) => (
+  <Typography variant="body1" sx={{ marginBottom: "rem", lineHeight: 1.3 }}>
+    {children}
+  </Typography>
+);
+
