@@ -15,6 +15,7 @@
   import ToggleColor from './header/ToogleColor';
   import AppLogo from './header/AppLogo';
   import Sidebar from './header/sidebar/Sidebar';
+import { Search } from './header/Search';
 
   function TemplatePage({children}) 
   {
@@ -37,6 +38,7 @@
           <StyledAppBar>
             <Toolbar variant="dense" disableGutters sx={appBarStyle}>
               <AppLogo mode={mode}/>
+              <Search />
               <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, alignItems: 'center' }}>
                 <ToggleColor mode={mode} setMode={setMode} />
                 <Stack spacing={2} direction="row">

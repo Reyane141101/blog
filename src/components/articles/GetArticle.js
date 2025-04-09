@@ -43,7 +43,7 @@ export default function GetArticle({ articleName })
     return (
         <TemplatePage>
             <ArticleRender content={content}/>
-            <CommentsSection articleId={articleName}/>
+            <CommentsSection articleName={articleName}/>
         </TemplatePage>
     );
 }

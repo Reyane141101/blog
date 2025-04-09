@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Typography, List, ListItem, Avatar, Divider, Box, IconButton } from "@mui/material";
+import { TextField, Button, Typography, List, ListItem, Avatar, Divider, Box } from "@mui/material";
 import { useAuth0 } from "@auth0/auth0-react";
-import { v4 as uuidv4 } from "uuid";
-import { useTheme } from '@mui/material/styles';
-import ReplyIcon from "@mui/icons-material/Reply";
-
+import { useTheme } from "@mui/material/styles";
+import { collection, addDoc, query, getDocs, orderBy } from "firebase/firestore";
+import { firestore } from "../../firebase";
 
 function CommentsSection({ articleName }) {
   const { user, isAuthenticated } = useAuth0();
@@ -12,37 +11,53 @@ function CommentsSection({ articleName }) {
   const [newComment, setNewComment] = useState("");
   const [replyText, setReplyText] = useState({});
   const [replyingTo, setReplyingTo] = useState(null);
-  
-  // Récupérer le thème actuel
   const theme = useTheme();
 
   useEffect(() => {
-    const storedComments = JSON.parse(localStorage.getItem(`comments-${articleName}`)) || [];
-    setComments(storedComments);
+    const fetchComments = async () => {
+      try {
+        const commentsRef = collection(firestore, "Comments");
+        const q = query(commentsRef, orderBy("timestamp", "asc"));
+        const querySnapshot = await getDocs(q);
+        const fetchedComments = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setComments(fetchedComments);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des commentaires :", error);
+      }
+    };
+
+    fetchComments();
   }, [articleName]);
 
-  const handleCommentSubmit = (parentId = null) => {
-    const text = parentId ? replyText[parentId] : newComment;
-    if (!text?.trim()) return;
+  const addComment = async (parentId = "") => {
+    const commentText = parentId ? replyText[parentId] : newComment;
+    if (!commentText.trim()) return;
 
     const commentData = {
-      id: uuidv4(),
-      text,
-      author: user.name || user.nickname,
+      authorId: user.sub,
+      text: commentText,
+      author: user.name,
       avatar: user.picture,
-      date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }),
+      timestamp: new Date(),
+      article: articleName,
       parentId,
     };
 
-    const updatedComments = [...comments, commentData];
-    setComments(updatedComments);
-    localStorage.setItem(`comments-${articleName}`, JSON.stringify(updatedComments));
+    try {
+      const commentsRef = collection(firestore, "Comments");
+      await addDoc(commentsRef, commentData);
 
-    if (parentId) {
-      setReplyText({ ...replyText, [parentId]: "" });
-      setReplyingTo(null);
-    } else {
-      setNewComment("");
+      if (parentId) {
+        setReplyText({ ...replyText, [parentId]: "" });
+        setReplyingTo(null);
+      } else {
+        setNewComment("");
+      }
+
+      const querySnapshot = await getDocs(query(commentsRef, orderBy("timestamp", "asc")));
+      setComments(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    } catch (e) {
+      console.error("Erreur lors de l'ajout du commentaire :", e);
     }
   };
 
@@ -65,20 +80,7 @@ function CommentsSection({ articleName }) {
             onChange={(e) => setNewComment(e.target.value)}
             sx={{ mb: 2, mt: 2 }}
           />
-        <Button
-          variant="outlined"
-          onClick={() => handleCommentSubmit()}
-          sx={{
-            backgroundColor: theme.palette.mode === 'dark' ? "white" : "#333",  
-            color: theme.palette.mode === 'dark' ? "black" : "white",          
-            border: `1px solid ${theme.palette.mode === 'dark' ? "black" : "#555"}`,
-            '&:hover': {
-              backgroundColor: theme.palette.mode === 'dark' ? "#f0f0f0" : "#444",
-            },
-          }}
-        >
-          Post
-        </Button>
+          <Button variant="outlined" onClick={() => addComment()}>Post</Button>
         </>
       ) : (
         <Typography variant="body1" color="text.secondary">
@@ -86,33 +88,30 @@ function CommentsSection({ articleName }) {
         </Typography>
       )}
 
-      <List sx={{ mt: 3 }}>
+      <List sx={{ mt: 1 }}>
         {comments.length > 0 ? (
           comments
             .filter((comment) => !comment.parentId)
             .map((comment) => (
               <React.Fragment key={comment.id}>
-                <ListItem alignItems="flex-start" sx={{ mb: 3 }}>
+                <ListItem alignItems="flex-start" sx={{ mb: -1 }}>
                   <Avatar alt={comment.author} src={comment.avatar} sx={{ mr: 3 }} />
-                  <div>
+                  <Box sx={{ mt: 1 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
                       {comment.author}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
-                      {comment.date}
+                    <Typography variant="caption" color="text.secondary">
+                      {comment.timestamp?.toDate ? comment.timestamp.toDate().toLocaleString() : new Date(comment.timestamp).toLocaleString()}
                     </Typography>
                     <Typography variant="body1">{comment.text}</Typography>
                     {isAuthenticated && (
-                      <IconButton
-                        size="small"
-                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                      >
-                        <ReplyIcon />
-                      </IconButton>
+                      <Button size="small" variant="text" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}>
+                        Reply
+                      </Button>
                     )}
 
                     {replyingTo === comment.id && (
-                      <Box sx={{ mt: 2, ml: 5 }}>
+                      <Box sx={{ mt: 1, ml: 5 }}>
                         <TextField
                           fullWidth
                           variant="outlined"
@@ -123,19 +122,7 @@ function CommentsSection({ articleName }) {
                           onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
                           sx={{ mb: 1 }}
                         />
-                        <Button
-                          variant="contained"
-                          size="small"
-                          onClick={() => handleCommentSubmit(comment.id)}
-                          sx={{
-                            backgroundColor: theme.palette.mode === 'dark' ? "white" : "#333",  
-                            color: theme.palette.mode === 'dark' ? "black" : "white",          
-                            border: `1px solid ${theme.palette.mode === 'dark' ? "black" : "#555"}`,
-                            '&:hover': {
-                              backgroundColor: theme.palette.mode === 'dark' ? "#f0f0f0" : "#444",
-                            },
-                          }}
-                        >
+                        <Button variant="contained" size="small" onClick={() => addComment(comment.id)}>
                           Post
                         </Button>
                       </Box>
@@ -151,15 +138,15 @@ function CommentsSection({ articleName }) {
                               <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
                                 {reply.author}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
-                                {reply.date}
+                              <Typography variant="caption" color="text.secondary">
+                                {reply.timestamp?.toDate ? reply.timestamp.toDate().toLocaleString() : new Date(reply.timestamp).toLocaleString()}
                               </Typography>
                               <Typography variant="body1">{reply.text}</Typography>
                             </div>
                           </ListItem>
                         ))}
                     </List>
-                  </div>
+                  </Box>
                 </ListItem>
                 <Divider />
               </React.Fragment>

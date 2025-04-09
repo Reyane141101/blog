@@ -5,9 +5,8 @@ import * as runtime from "react/jsx-runtime";
 import { run } from "@mdx-js/mdx";
 import { CenteredText, CodeBlock, Image, Paragraph } from "./ArticleComponents";
 
-console.log("CodeBlock in ArticleRender:", CodeBlock);
-
-export const ArticleRender = ({ content }) => {
+export const ArticleRender = ({ content }) => 
+{
   const [mdxContent, setMdxContent] = React.useState(null);
 
   React.useEffect(() => {
