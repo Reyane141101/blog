@@ -12,9 +12,9 @@ export default function LoginButton() {
       startIcon={<LoginOutlined />}
       sx={{
         textTransform: "none",
-        fontSize: "1rem",
+        fontSize: "0.9rem",
         padding: "10px 20px",
-        borderRadius: "12px",
+        borderRadius: "10px",
         "&:hover": {
           backgroundColor: "rgba(0, 123, 255, 0.1)",
         },

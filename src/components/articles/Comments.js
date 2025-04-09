@@ -3,7 +3,7 @@ import { TextField, Button, Typography, List, ListItem, Avatar, Divider, Box } f
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTheme } from "@mui/material/styles";
 import { collection, addDoc, query, getDocs, orderBy } from "firebase/firestore";
-import { firestore } from "../../firebase";
+import { firestore } from "../../utils/firebase";
 
 function CommentsSection({ articleName }) {
   const { user, isAuthenticated } = useAuth0();

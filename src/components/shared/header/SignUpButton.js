@@ -13,13 +13,9 @@ export default function SignUpButton() {
       startIcon={<PersonAddAltOutlined />}
       sx={{
         textTransform: "none",
-        fontSize: "1rem",
+        fontSize: "0.9rem",
         padding: "10px 20px",
         borderRadius: "12px",
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
-        "&:hover": {
-          backgroundColor: "#1E88E5",
-        },
       }}
     >
       Sign up

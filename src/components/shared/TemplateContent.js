@@ -30,7 +30,7 @@ import { Search } from './header/Search';
     }, []);
 
     const theme = createTheme({ palette: { mode } });
-    const appBarStyle = { display: 'flex', justifyContent: 'space-between', width: '98%', p: '15px 12px' };
+    const appBarStyle = { display: 'flex', justifyContent: 'space-between',  p: '15px 12px' };
 
     return (
       <ThemeProvider theme={theme}>

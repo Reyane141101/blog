@@ -1,20 +1,10 @@
-import './App.css';
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+import ArticlePage from './pages/ArticlePage';
 import NotFoundPage from './pages/NotFoundPage';
 import MainPage from './pages/MainPage'
-import GetArticle from './components/articles/GetArticle';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-
-
-function Article() 
-{
-  let articleId = useParams();
-  let ArticleName = articleId['*'] + '.mdx'
-  return (
-    <GetArticle articleName={ArticleName}/>
-    );
-}
+import SearchPage from './pages/SearchPage';
 
 function App() 
 {
@@ -23,7 +13,8 @@ function App()
       <div className="App">
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/articles/*" element={<Article />} />
+          <Route path="/articles/*" element={<ArticlePage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>

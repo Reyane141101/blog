@@ -1,26 +1,35 @@
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import Box from '@mui/material/Box';
+import { Box, FormControl, OutlinedInput } from '@mui/material';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 export function Search() {
+  const [searchValue, setSearchValue] = useState('');
+  const navigate = useNavigate();
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') 
+      {
+        setSearchValue(searchValue)
+        const query = encodeURIComponent(searchValue.trim());
+        navigate(`/search?q=${query}`);
+        setSearchValue("")
+      }
+  };
   return (
-    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-      <FormControl sx={{ width: { xs: '90%', md: '50%' } }} variant="outlined">
+    <Box sx={{ flexGrow: 1.5}}>
+      <FormControl sx={{ width: { md: '70%' } }} variant="outlined">
         <OutlinedInput
           size="small"
           id="search"
-          placeholder="Search…"
+          placeholder="Search an article…"
           sx={{ bgcolor: 'background.paper', borderRadius: 2 }}
-          startAdornment={
-            <InputAdornment position="start" sx={{ color: 'text.primary' }}>
-              <SearchRoundedIcon fontSize="small" />
-            </InputAdornment>
-          }
           inputProps={{
             'aria-label': 'search',
           }}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </FormControl>
     </Box>

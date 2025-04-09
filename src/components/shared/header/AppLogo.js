@@ -1,6 +1,5 @@
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import logo from "./../../../logo_olympe.svg"
 
 export default function AppLogo({ mode }) 
 {
@@ -19,7 +18,7 @@ export default function AppLogo({ mode })
         }}
       >
         <img
-          src={logo}
+          src={`${process.env.PUBLIC_URL}/logo_olympe.svg`}
           alt="Olympe Logo"
           style={{
             height: 55,
