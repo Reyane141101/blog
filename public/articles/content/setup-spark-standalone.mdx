@@ -1,0 +1,193 @@
+# How to set up Spark in standalone mode
+
+<Image src="https://datascientest.com/wp-content/uploads/2021/08/illu_apache_spark-28.png" alt="Installing Apache Spark" />
+
+<Paragraph>Apache Spark is a fast, general-purpose cluster-computing system designed for 
+high-performance big data processing. It’s ideal for handling massive datasets by performing computations in memory. 
+When running in standalone mode, Spark operates on a single machine or a few machines, making it suitable for development 
+and smaller-scale deployments.</Paragraph>
+
+<Paragraph>If you're new to Apache Spark, check out this <a href="https://spark.apache.org/downloads.html">overview of Spark</a>.</Paragraph>
+
+## Setup Spark
+
+<Paragraph>In this example, we assume your company has a limited infrastructure, and you need to set up a Spark cluster for your data engineers to process large-scale data.</Paragraph>
+
+<Paragraph>For our setup, we only have three VMs, which will be designated as `worker1`, `worker2`, and `master`.</Paragraph>
+
+### VM Setup with Virt-Manager
+
+<Paragraph>Using Virt-Manager, I created three VMs with the following configurations:</Paragraph>
+
+<Image src="https://i.postimg.cc/Ghzj6tGj/setup-Spark-Standalone-virt-manager.png" alt="Spark VMs" />
+
+<Paragraph>- **Worker Nodes**: 50 GB of RAM each.</Paragraph>
+<Paragraph>- **Master Node**: 25 GB of RAM.</Paragraph>
+<Paragraph>- Each VM has a unique IP address.</Paragraph>
+
+### Spark Installation Process
+
+Now that our 3 vms are ready to be user we're going to use SSH to connect to them
+
+<CodeBlock language="bash">
+```
+ssh <IP_ADRESS_VM>
+```
+</CodeBlock>
+
+<Paragraph>And now for the 3 nodes (VM) we’ll download Spark from the official Apache archives. I chose Spark version 3.4.1:</Paragraph>
+
+<CodeBlock language="bash">
+```
+wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.tgz
+```
+</CodeBlock>
+
+<Paragraph>Then, unpack the `.tgz` file and move it to `/opt/spark/`:</Paragraph>
+
+<CodeBlock language="bash">
+```
+tar -xvf spark-3.4.1-bin-hadoop3.tgz
+sudo mv spark-3.4.1-bin-hadoop3 /opt/spark/
+```
+</CodeBlock>
+
+<Paragraph>Next, set up the environment variables:</Paragraph>
+
+<CodeBlock language="bash">
+```
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+```
+</CodeBlock>
+
+### Installing Java
+
+<Paragraph>Apache Spark requires Java to run. For version 3.4.1, Java 8, 11, or 17 is compatible. Here, we install OpenJDK 11:</Paragraph>
+
+<CodeBlock language="bash">
+```
+sudo apt install openjdk-11-jdk
+```
+</CodeBlock>
+
+<Paragraph>Then, set up Java environment variables:</Paragraph>
+
+<CodeBlock language="bash">
+```
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+</CodeBlock>
+
+### Modifying `/etc/hosts`
+
+<Paragraph>To ensure proper communication between the nodes, modify the `/etc/hosts` file to map the IP addresses of the master and worker nodes.</Paragraph>
+
+<CodeBlock language="bash">
+```
+sudo nano /etc/hosts
+```
+</CodeBlock>
+
+<Paragraph>Add the following lines: </Paragraph>
+
+Tips: you can see the ip of your vm by doing 
+<CodeBlock language="bash">
+```
+ip -c a 
+```
+</CodeBlock>
+
+<CodeBlock language="bash">
+```
+<IP_MASTER_NODE> master_node
+<IP_OF_YOUR_WORKER> worker_1_node
+(add all your workers...) 
+```
+</CodeBlock>
+
+
+### Configuring Spark for master node
+
+
+<Paragraph>Now, navigate to the Spark configuration directory of your master node and move the template files to active configurations:</Paragraph>
+
+<CodeBlock language="bash">
+```
+cd /opt/spark/conf
+mv spark-env.sh.template spark-env.sh
+mv workers.template workers
+```
+</CodeBlock>
+
+<Paragraph>In the `spark-env.sh` file, set the master node’s IP:</Paragraph>
+
+<CodeBlock language="bash">
+```
+SPARK_MASTER_HOST=<IP_MASTER_NODE>
+```
+</CodeBlock>
+
+<Paragraph>In the `workers` file, add the worker node labels (as defined in `/etc/hosts`):</Paragraph>
+
+<CodeBlock language="bash">
+```
+<NAME_GIVEN_TO_THE_WORKERS_IN_/etc/hosts>
+...
+```
+</CodeBlock>
+
+### Starting the Cluster
+
+<Paragraph>Once the configurations are done, start the cluster:</Paragraph>
+
+<CodeBlock language="bash">
+```
+/opt/spark/sbin/./start-all.sh
+```
+</CodeBlock>
+
+<Paragraph>You can monitor the logs of the master node here:</Paragraph>
+
+<CodeBlock language="bash">
+```
+cd /opt/spark/logs/
+```
+</CodeBlock>
+
+### Verifying the Spark UI
+
+<Paragraph>If everything has gone smoothly, the logs will show that the Spark UI is accessible on the master node’s IP address. You should see a page like this:</Paragraph>
+
+<Image src="https://i.postimg.cc/xTJwGHz4/Capture-d-cran-2025-02-06-114825.png" alt="Spark UI" />
+
+### Running a Spark Job
+
+<Paragraph>To test the cluster, submit a Spark job using the `spark-submit` command. This will execute the job on the cluster.</Paragraph>
+
+<Paragraph>Here’s a basic example of submitting a Spark job written in Python:</Paragraph>
+
+<CodeBlock language="bash">
+```
+spark-submit --master spark://192.168.122.71:7077 my_spark_app.py
+```
+</CodeBlock>
+
+### Why Choose Apache Spark?
+
+<Paragraph>Apache Spark offers a lot of advantages, including:</Paragraph>
+
+<Paragraph>- **Speed**: Spark is much faster than Hadoop for most data processing workloads.</Paragraph>
+<Paragraph>- **Scalability**: Spark can scale from a single machine to a large cluster with ease.</Paragraph>
+<Paragraph>- **Versatility**: Spark supports a variety of data processing tasks, such as batch processing, stream processing, machine learning, and SQL queries.</Paragraph>
+
+<Image src="https://www.example.com/spark-advantages.png" alt="Advantages of Apache Spark" />
+
+## Conclusion
+
+<Paragraph>Apache Spark is a powerful tool for big data processing. With the steps outlined in this guide, you should now be able to install and set up Spark, process your data, and even visualize the results.</Paragraph>
+
+<Paragraph>Spark can handle a wide variety of workloads, and with its support for distributed computing, you can scale your data processing pipelines to handle petabytes of data.</Paragraph>
+
+<Image src="https://www.example.com/spark-conclusion.png" alt="Conclusion on Apache Spark" />
