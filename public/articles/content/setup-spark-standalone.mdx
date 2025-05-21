@@ -1,4 +1,4 @@
-# How to Set Up Spark in Standalone Mode
+# How to set up Spark in standalone mode
 
 <Image src="https://datascientest.com/wp-content/uploads/2021/08/illu_apache_spark-28.png" alt="Installing Apache Spark" />
 
@@ -9,7 +9,7 @@ and smaller-scale deployments.</Paragraph>
 
 <Paragraph>If you're new to Apache Spark, check out this <a href="https://spark.apache.org/downloads.html">overview of Spark</a>.</Paragraph>
 
-## Spark Setup for Your Data Engineers
+## Setup Spark
 
 <Paragraph>In this example, we assume your company has a limited infrastructure, and you need to set up a Spark cluster for your data engineers to process large-scale data.</Paragraph>
 
@@ -27,7 +27,15 @@ and smaller-scale deployments.</Paragraph>
 
 ### Spark Installation Process
 
-<Paragraph>We’ll download Spark from the official Apache archives. I chose Spark version 3.4.1:</Paragraph>
+Now that our 3 vms are ready to be user we're going to use SSH to connect to them
+
+<CodeBlock language="bash">
+```
+ssh <IP_ADRESS_VM>
+```
+</CodeBlock>
+
+<Paragraph>And now for the 3 nodes (VM) we’ll download Spark from the official Apache archives. I chose Spark version 3.4.1:</Paragraph>
 
 <CodeBlock language="bash">
 ```
@@ -40,7 +48,7 @@ wget https://archive.apache.org/dist/spark/spark-3.4.1/spark-3.4.1-bin-hadoop3.t
 <CodeBlock language="bash">
 ```
 tar -xvf spark-3.4.1-bin-hadoop3.tgz
-sudo mv spark-3.4.1-bin-hadoop /opt/spark/
+sudo mv spark-3.4.1-bin-hadoop3 /opt/spark/
 ```
 </CodeBlock>
 
@@ -82,19 +90,28 @@ sudo nano /etc/hosts
 ```
 </CodeBlock>
 
-<Paragraph>Add the following lines:</Paragraph>
+<Paragraph>Add the following lines: </Paragraph>
 
+Tips: you can see the ip of your vm by doing 
 <CodeBlock language="bash">
 ```
-192.168.122.71 master_node
-192.168.122.72 worker_1_node
-192.168.122.73 worker_2_node
+ip -c a 
 ```
 </CodeBlock>
 
-### Configuring Spark
+<CodeBlock language="bash">
+```
+<IP_MASTER_NODE> master_node
+<IP_OF_YOUR_WORKER> worker_1_node
+(add all your workers...) 
+```
+</CodeBlock>
 
-<Paragraph>Now, navigate to the Spark configuration directory and move the template files to active configurations:</Paragraph>
+
+### Configuring Spark for master node
+
+
+<Paragraph>Now, navigate to the Spark configuration directory of your master node and move the template files to active configurations:</Paragraph>
 
 <CodeBlock language="bash">
 ```
@@ -108,7 +125,7 @@ mv workers.template workers
 
 <CodeBlock language="bash">
 ```
-SPARK_MASTER_HOST=192.168.122.71
+SPARK_MASTER_HOST=<IP_MASTER_NODE>
 ```
 </CodeBlock>
 
@@ -116,8 +133,8 @@ SPARK_MASTER_HOST=192.168.122.71
 
 <CodeBlock language="bash">
 ```
-worker_1_node
-worker_2_node
+<NAME_GIVEN_TO_THE_WORKERS_IN_/etc/hosts>
+...
 ```
 </CodeBlock>
 
